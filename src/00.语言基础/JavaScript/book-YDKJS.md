@@ -1,0 +1,226 @@
+## Preface
+
+### The Parts (本书的角色)
+
+But what I hope and believe you'll still get is the same commitment to **respecting JS and digging into what really makes it tick.**
+
+Don't buy the lie that you should only learn and use a small collection of good parts while avoiding all the bad stuff. Don't buy the "X is the new Y" snake oil, that some new feature of the language instantly relegates all usage of a previous feature as obsolete and ignorant. Don't listen when someone says your code isn't "modern" because it isn't yet using a stage-0 feature that was only proposed a few weeks ago!
+
+Every part of JS is useful. Some parts are more useful than others. Some parts require you to be more careful and intentional.
+
+My unreserved claim is that **you should go about learning all parts of JavaScript, and where appropriate, use them!** And if I may be so bold as to suggest: it's time to discard any JS books that tell you otherwise.
+
+### The Title?
+
+The primary point of the title "You Don't Know JS Yet" is to point out that most JS developers don't take the time to really understand how the code that they write works. They know that it works—that it produces a desired outcome. **But they either don't understand exactly how, or worse, they have an inaccurate mental model for the how that falters on closer scrutiny.**
+
+**Why** does it do what it does? **Why** is one way better or more appropriate than the other half-dozen ways you could have accomplished it? **Why** do all the "popular kids" say to do X with your code, but it turns out that Y might be a better choice?
+
+I encourage you to adopt a mindset around JavaScript, and indeed all of software development, that **you will never fully have mastered it, but that you can and should keep working to get closer to that end, a journey that will stretch for the entirety of your software development career, and beyond.**
+
+### The Path
+
+Nobody can really hope to **download all this information to their brains in a single pass and retain any significant amount of it**. That's unreasonable, and it's foolish to try.
+
+My suggestion is you take your time going through YDKJSY. Take one chapter, read it completely through start to finish, and then go back and re-read it section by section. Stop in between each section, and practice the code or ideas from that section. For larger concepts, it probably is a good idea to expect to spend several days **digesting, re-reading, practicing, then digesting some more**.
+
+You could spend a week or two on each chapter, and a month or two on each book, and a year or more on the whole series, and you would still not be squeezing every ounce of YDKJSY out.
+
+Don't binge these books; be patient and spread out your reading. Interleave reading with lots of practice on real code in your job or on projects you participate in. Wrestle with the opinions I've presented along the way, debate with others, and most of all, disagree with me! Run a study group or book club. Teach mini-workshops at your office. Write blog posts on what you've learned. Speak about these topics at local JS meetups.
+
+## Chapter 1: What's the Scope?
+
+## Chapter 2: Illustrating Lexical Scope
+
+Compile 阶段做的事是将【声明】的变量都放进相应的 Scope 中，Execute 阶段才去【查找】和**执行**【赋值】操作等。
+
+将【Declation】和【Target/Source Reference】区分开有助于理解。
+
+:thinking: > This conversation is another question-and-answer exchange... look up the hoisted `getStudentName` identifier < Why hoisted?
+
+:thinking: What is registered? (in Nested Scope)
+
+## Chapter 3: The Scope Chain
+
+:thinking: > Copying Is Not Accessing < 这一小节和 Scope 有一毛钱关系吗？
+
+:thinking: > trying to "cross the boundary" of (or hop over) < 也就是说 var 有全局作用域和函数作用域，let 无全局作用域有函数和块作用域？
+
+:thinking: > Arrow Function < 小节中，作者否定【箭头函数在词法作用域上和正常的函数表现不同】这种说法。可以推测 this 的指向不包含在作者在这里讨论的【作用域】中？
+
+:thinking: Function declaration vs. function expression?
+
+区别在于 Name identifier 发生了什么。
+
+```js
+var askQuestion = function ofTheTeacher() {
+    console.log(ofTheTeacher);
+};
+
+askQuestion();
+// function ofTheTeacher()...
+
+console.log(ofTheTeacher);
+// ReferenceError: ofTheTeacher is not defined
+```
+
+:thinking: Arrow function vs. anonymous function
+
+```js
+var askQuestion = () => {
+    // ..
+};
+
+askQuestion.name;   // askQuestion
+```
+
+:thinking: 如何证明 `var` 只有全局作用域和函数作用域，没有块作用域？
+
+```js
+function another() {
+    // ..
+
+    {
+        let special = "JavaScript";
+
+        {
+            var special = "JavaScript";
+            // ^^^ Syntax Error
+
+            // ..
+        }
+    }
+}
+```
+
+:thinking:  如何证明 `let`、`const` 有全局作用域但声明的变量不会加到【全局变量】中？
+
+```js
+var one = 1;
+let notOne = 2;
+const notTwo = 3;
+class notThree {}
+
+console.log(window.one);       // 1
+console.log(window.notOne);    // undefined
+console.log(window.notTwo);    // undefined
+console.log(window.notThree);  // undefined
+```
+
+```js
+window.something = 42;
+
+let something = "Kyle";
+
+console.log(something);
+// Kyle
+
+console.log(window.something);
+// 42
+```
+
+事实是除了 `var`、`function` 都不能。`var` and `function` declarations create mirrored properties on the global object, where other declarations (`let`, etc) do not.
+
+## Chapter 4: Around the Global Scope
+
+JS 中文件之间相互沟通的三种方法：
+
+- ES Module
+- Bundler (file contents wrapped in a single enclosing scope, such as a wrapper function)
+- Global Scope
+
+> 感觉 ESM 和 Bundler 打包其实很相似。
+
+如何获得 Global scope object reference，一段代码总结知识点：
+
+```js
+const theGlobalScopeObject =
+    (typeof globalThis != "undefined") ? globalThis :
+    (typeof global != "undefined") ? global :
+    (typeof window != "undefined") ? window :
+    (typeof self != "undefined") ? self :
+    (new Function("return this"))();
+```
+
+:thinking: > Globals Shadowing Globals < 太让人迷惑了这一节-。- 总结起来就是在 Global Scope 中用 let 和 var 声明变量会导致不同的结果，最好用 var？
+
+:thinking: What is REPL?
+
+Read-Eval-Print loop。例如在 JS 中，在浏览器控制台里输入然后马上得到结果的。
+
+:thinking: > They do process JS code, but they also lean in favor of the UX interaction being most friendly to developers (aka, developer experience, or DX). <
+
+这里的 adherent 可以理解为完全依附 JS 的环境，同样的代码执行效果完全一样的 JS 环境？
+
+:thinking: > The module's top-level scope is descended from the global scope, almost as if the entire contents of the module were wrapped in a function. <
+
+module 的 scope 是在 global scope 下的 function scope?
+
+## Chapter 5: The (Not So) Secret Lifecycle of Variables
+
+Hositing 的本质是发生在 JS Compile（中的 Parse） 阶段，我们可以形象地把它当做 Runtime 时候发生在某一 Scope 内的的【提升】行为。
+
+Hositing 这个概念其实并不准确，更准确的描述是 auto-registration 和 auto-initialization。
+
+其中：
+
+- `var` 和 `function` 都会同时 auto-registration 和 auto-initialization，没有 TDZ
+- 而 `let` 和 `const` 先会先 auto-registration，直到执行到声明的那句，才会 initialization，有 TDZ
+- 另外，对于函数而言，还有一种提升叫做 **Function hoisting**。某个 Identifier 是否可以被 `Identifier()` 依赖于 function hoisting，且这种用法仅仅限于 **Function Declaration**, not function expression. expression 受控于 `var`.
+
+```js
+greeting();
+// Hello!
+
+function greeting() {
+    console.log("Hello!");
+}
+```
+
+```js
+greeting();
+// TypeError
+
+var greeting = function greeting() {
+    console.log("Hello!");
+};
+```
+
+>`TypeError`: Trying to do something with a value that is not allowed, like `greeting` is not a function. (Type errors represent faults that arise during program execution.)
+>
+>`ReferenceError`: it couldn't find `greeting` as an identifier in the scope.
+>
+>`SyntaxError`: Syntax errors represent faults in the program that stop it from even starting execution.（语法错误，联系词法分析/语法树）
+
+:thinking: > Incorrect or incomplete mental models often still seem sufficient because they can occasionally lead to accidental right answers. But in the long run it's harder to accurately analyze and predict outcomes if your thinking isn't particularly aligned with how the JS engine works. <
+
+其实不光是 JS Engine，很多事情都是这样。刚开始一个不太准确的比喻可以很好的帮助你理解，拥有一个大致的框架，但越深入就会发现这个比喻其实没有那么【精确】【完备】，but 在最初学习的时候是需要的。
+
+:thinking: > The first greeting declaration registers the identifier to the scope, and because it's a var the auto-initialization will be undefined. The function declaration doesn't need to re-register the identifier, but because of function hoisting it overrides the auto-initialization to use the function reference. <
+
+The "rule" of the hoisting metaphor is that function declarations are hoisted first, then variables are hoisted immediately after all the functions. ????
+
+:thinking: > Is value being "re-declared" here, especially since we know var allows it? No. Because var is not treated as a block-scoping declaration (see Chapter 6), it attaches itself to the global scope. So there's just one value variable, in the same scope as keepGoing (global scope, in this case). No "re-declaration" here, either! <
+
+？？？
+
+:thinking: > for..in and for..of are fine to use with const: <
+
+？？？？
+
+
+
+## Chapter 6: Limiting Scope Exposure
+
+主要在讲 One of the most important organizational techniques is to ensure that no variable is over-exposed to unnecessary scopes (POLE).
+
+基于这种原则，当我们遇到函数作用域时可以用 `var` 声明，并放在作用域之前，当遇到块作用域时尽量用 `let`。
+
+另外，并不是所有 {} 都是 block，也并不是所有 block 都有 block scope。前者取决于关键词，后者取决于是否有 `let` `const` 声明。
+
+`let` 首先应该存在在 scope 里，无论是 Global scope、Function scope 还是 Block scope。所以不是以上三者的东西就没有 scope 可言，自然也无 `let` 声明可言。例如，class 虽然使用 {} 但它并不是 block，更没有 block scope，所以 class 里没有 `let` 声明。
+
+:thinking: > A block only becomes a scope if necessary, to contain its block-scoped declarations (i.e., let or const). <
+
+let 首先应该存在在 scope 里，无论是 Global scope、Function scope 还是 Block scope。所以不是以上三者的东西就没有 scope 可言，自然也无 let 声明可言。例如，class 虽然使用 {} 但它并不是 block，更没有 block scope，所以 class 里没有 let 声明。
+
