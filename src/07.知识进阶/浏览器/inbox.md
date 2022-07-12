@@ -1,4 +1,4 @@
-# Browser
+# Inbox
 
 ## Same-origin policy
 
