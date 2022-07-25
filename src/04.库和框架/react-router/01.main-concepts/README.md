@@ -2,10 +2,6 @@
 
 
 ## Materials
-
-### Videos
-
-
 ### Reading
 
 [React Router - Main Concepts](https://reactrouter.com/docs/en/v6/getting-started/concepts)
@@ -15,3 +11,7 @@
 ## Tasks
 
 1. Add to Discord server
+   
+2. Contribute to React Router
+   
+   https://github.com/remix-run/react-router/pull/9062
